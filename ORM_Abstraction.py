@@ -12,7 +12,7 @@ Session = sessionmaker(bind = engine)
 session = Session()
 
 def add_json():
-    with open('C:\Project\Lesson\ORM/tests_data.json', 'r', encoding = 'utf-8') as f:
+    with open('tests_data.json', 'r', encoding = 'utf-8') as f:
         texts = json.load(f)
         for text in texts:
             if str(text['model']) == 'publisher':
