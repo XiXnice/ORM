@@ -3,8 +3,16 @@ from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
-DSN =
-engine = sqlalchemy.create_engine(DSN)
+def dsn():
+    connection_driver = input('Введите драйвер подключения:')
+    login = input('Введите логин:')
+    password = input('Введите пароль:')
+    host = input('Введите хост:')
+    name_bd = input('Введите название БД:')
+
+    DSN = f"{connection_driver}://{login}:{password}@localhost:{host}/{name_bd}"
+    engine = sqlalchemy.create_engine(DSN)
+    return DSN, engine
 
 
 class Publisher(Base):
@@ -16,21 +24,21 @@ class Publisher(Base):
     def __str__(self):
         return f'Publisher {self.id} : {self.name}'
 
-class Book(Base):
-    __tablename__ = "book"
+class Books(Base):
+    __tablename__ = "books"
 
     id_book = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     title = sqlalchemy.Column(sqlalchemy.String(length=100), nullable=False)
     id_publisher = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("publisher.id_publisher"), nullable=False)
 
-    publisher = relationship(Publisher, backref="book")
+    publisher = relationship(Publisher, backref="books")
 
     def __str__(self):
         return f'Book {self.id_book} : ({self.title}, {self.id_publisher})'
 
 
 
-class Shop(Base):
+class Shops(Base):
     __tablename__ = "shop"
 
     id_shop = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
@@ -41,24 +49,24 @@ class Shop(Base):
 
 
 
-class Stock(Base):
-    __tablename__ = "stock"
+class Stocks(Base):
+    __tablename__ = "stocks"
 
     id_stock = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     id_shop = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("shop.id_shop"), nullable=False)
     id_book = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("book.id_book"), nullable=False)
     count = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
 
-    book = relationship(Book, backref="stock")
-    shop = relationship(Shop, backref="stock")
+    book = relationship(Books, backref="stocks")
+    shop = relationship(Shops, backref="stocks")
 
     def __str__(self):
         return f'Stock {self.id_stock} : ({self.id_shop}, {self.id_book}, {self.count})'
 
 
 
-class Sale(Base):
-    __tablename__ = "sale"
+class Sales(Base):
+    __tablename__ = "sales"
 
     id_sale = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     price = sqlalchemy.Column(sqlalchemy.Numeric, nullable=False)
@@ -66,7 +74,7 @@ class Sale(Base):
     count = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
     id_stock = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("stock.id_stock"), nullable=False)
 
-    stock = relationship(Stock, backref="sale")
+    stock = relationship(Stocks, backref="sales")
 
     def __str__(self):
         return f'Sale {self.id_sale} : ({self.price}, {self.date_sale}, {self.count}, {self.id_stock})'
